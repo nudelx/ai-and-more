@@ -1,11 +1,15 @@
-version: '3.8'
+version: '3'
 
 services: 
   open-webui:
     build: web-ui/.
     container_name: open-webui
+    network_mode: bridge
     ports:
       - "3000:8080"
+
+    networks:
+      - my-network
     
     restart: always
     volumes:
@@ -16,6 +20,24 @@ services:
   ollama-server:
     restart: always
     build: ollama-server/.
+    # command: ["ollama", "serve"]
+    network_mode: bridge
+    container_name: ollama-server
+    networks:
+      - my-network
+    ports:
+      - "11434:11434"
+    # devices:
+    #   - /dev/nvidia0:/dev/nvidia0
+    #   - /dev/nvidiactl:/dev/nvidiactl
+    #   - /dev/nvidia-uvm:/dev/nvidia-u
+    # runtime: nvidia
+    volumes:
+      - ollama-server:/root/.ollama
 
 volumes:
   open-webui:
+  ollama-server:
+
+networks:
+  my-network:
